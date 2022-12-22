@@ -2,17 +2,22 @@ package com.backupmanager.app;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.Menu;
+import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Switch;
 
 import com.backupmanager.api.DirectoriesAPI;
+import com.backupmanager.app.utils.Configuration;
 import com.backupmanager.app.utils.File;
 import com.backupmanager.app.utils.ListViewAdapter;
 import com.backupmanager.data.AppStorage;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.annotation.Nullable;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -56,7 +61,6 @@ public class MainPageActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
         getFilesFromRepository("");
-        System.out.println(getApplicationContext().getFilesDir().getAbsolutePath());
     }
 
     @Override

@@ -6,14 +6,13 @@ import androidx.lifecycle.ViewModel;
 
 public class SettingsViewModel extends ViewModel {
 
-    private final MutableLiveData<String> mText;
+    private final MutableLiveData<Boolean> mText;
 
     public SettingsViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is gallery fragment");
     }
 
-    public LiveData<String> getText() {
+    public LiveData<Boolean> getValue() {
         return mText;
     }
 }
