@@ -3,23 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/mobile_navigation"
-    app:startDestination="@+id/nav_home">
+    app:startDestination="@+id/nav_disk">
 
     <fragment
-        android:id="@+id/nav_home"
-        android:name="com.backupmanager.app.ui.home.HomeFragment"
-        android:label="@string/menu_home"
-        tools:layout="@layout/fragment_home" />
+        android:id="@+id/nav_disk"
+        android:name="com.backupmanager.app.ui.disk.DiskFragment"
+        android:label="@string/menu_disk"
+        tools:layout="@layout/fragment_disk" />
 
     <fragment
-        android:id="@+id/nav_gallery"
-        android:name="com.backupmanager.app.ui.gallery.GalleryFragment"
-        android:label="@string/menu_gallery"
-        tools:layout="@layout/fragment_gallery" />
+        android:id="@+id/nav_settings"
+        android:name="com.backupmanager.app.ui.settings.SettingsFragment"
+        android:label="@string/menu_settings"
+        tools:layout="@layout/fragment_settings" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.backupmanager.app.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_local_files"
+        android:name="com.backupmanager.app.ui.localfiles.LocalFilesFragment"
+        android:label="@string/menu_local_files"
+        tools:layout="@layout/fragment_local_files" />
 </navigation>

@@ -1,23 +1,17 @@
-package com.backupmanager.app.ui.home;
-
-import android.widget.ArrayAdapter;
-import android.widget.TextView;
+package com.backupmanager.app.ui.disk;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.backupmanager.app.MainPageActivity;
 import com.backupmanager.app.utils.ListViewAdapter;
 import com.backupmanager.data.AppStorage;
 
-import java.util.Arrays;
-
-public class HomeViewModel extends ViewModel {
+public class DiskViewModel extends ViewModel {
 
     private final MutableLiveData<ListViewAdapter> listView;
 
-    public HomeViewModel() {
+    public DiskViewModel() {
         listView = new MutableLiveData<>();
         listView.setValue(AppStorage.adapter);
     }

@@ -57,7 +57,6 @@ public class LoginActivity extends AppCompatActivity {
         final EditText passwordEditText = binding.password;
         final Button loginButton = binding.login;
         final ProgressBar loadingProgressBar = binding.loading;
-        Configuration.getConfiguration(getApplicationContext()).clearConfiguration();
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
             public void onChanged(@Nullable LoginFormState loginFormState) {
@@ -73,7 +72,6 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
         });
-
         loginViewModel.getLoginResult().observe(this, new Observer<LoginResult>() {
             @Override
             public void onChanged(@Nullable LoginResult loginResult) {
@@ -123,39 +121,49 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         loginButton.setOnClickListener(new View.OnClickListener() {
-            @SuppressLint("StaticFieldLeak")
+
             @Override
             public void onClick(View v) {
-                new AsyncTask<URL, String, String>(){
-                    @Override
-                    protected String doInBackground(URL... urls) {
-                        String username = ((TextView)findViewById(R.id.username)).getText().toString();
-                        String password = ((TextView)findViewById(R.id.password)).getText().toString();
-                        try{
-                            URL url = new URL(AppStorage.baseUrl + "/login");
-                            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                            connection.setRequestProperty("Authorization" , "Basic " + new String(Base64.encode((username + ":" + password).getBytes(StandardCharsets.UTF_8), 0)));
-                            if(connection.getResponseCode() == HttpURLConnection.HTTP_OK){
-                                Intent mainPage = new Intent(LoginActivity.this, MainPageActivity.class);
-                                mainPage.putExtra("USERNAME", username);
-                                mainPage.putExtra("PASSWORD", password);
-                                startActivity(mainPage);
-                            }else{
-                                runOnUiThread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        showLoginFailed(R.string.login_failed);
-                                    }
-                                });
-                            }
-                        }catch (Exception e){
-                            e.printStackTrace();
-                        }
-                        return null;
-                    }
-                }.execute();
+                login(((TextView)findViewById(R.id.username)).getText().toString(), ((TextView)findViewById(R.id.password)).getText().toString());
             }
         });
+        checkAutoLogin();
+    }
+
+    private void login(String username, String password){
+        @SuppressLint("StaticFieldLeak") final AsyncTask<URL, String, String> task = new AsyncTask<URL, String, String>(){
+            @Override
+            protected String doInBackground(URL... urls) {
+                try{
+                    URL url = new URL(AppStorage.baseUrl + "/login");
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestProperty("Authorization" , "Basic " + new String(Base64.encode((username + ":" + password).getBytes(StandardCharsets.UTF_8), 0)));
+                    if(connection.getResponseCode() == HttpURLConnection.HTTP_OK){
+                        Intent mainPage = new Intent(LoginActivity.this, MainPageActivity.class);
+                        mainPage.putExtra("USERNAME", username);
+                        mainPage.putExtra("PASSWORD", password);
+                        startActivity(mainPage);
+                    }else{
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                showLoginFailed(R.string.login_failed);
+                            }
+                        });
+                    }
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        };
+        task.execute();
+    }
+
+    private void checkAutoLogin() {
+        if(Configuration.getConfiguration(getApplicationContext()).getParameterValue("autologin").equals("true")){
+            login(Configuration.getConfiguration(getApplicationContext()).getParameterValue("username"), Configuration.getConfiguration(getApplicationContext()).getParameterValue("password"));
+        }
     }
 
     private void showLoginFailed(@StringRes Integer errorString) {

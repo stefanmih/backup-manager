@@ -23,8 +23,8 @@ public class Configuration {
         confFile = new File(context.getFilesDir().getAbsolutePath(), "configuration.cfg");
         if (!confFile.exists()) {
             generateFile();
-        }else if(confFile.length() == 0){
-            configurationMap.put("autologin", "false");
+        }else if(confFile.length() < 5){
+            configurationMap.put("autologin", "true");
             configurationMap.put("username", "admin");
             configurationMap.put("password", "admin");
             writeToFile();
@@ -42,7 +42,7 @@ public class Configuration {
     }
 
     private synchronized void writeToFile(String content) {
-        configurationMap.put(content.split("=")[0], content.split("=")[1]);
+        configurationMap.put(content.split("=")[0].trim(), content.split("=")[1].trim());
         writeToFile();
     }
 
@@ -51,11 +51,10 @@ public class Configuration {
             clearConfiguration();
             FileWriter writer = new FileWriter(confFile, true);
             for (Map.Entry<String, String> entry : configurationMap.entrySet()) {
-                writer.append(entry.getKey() + "=" + entry.getValue());
+                writer.append(entry.getKey().trim() + "=" + entry.getValue().trim() + "\n");
             }
             writer.flush();
             writer.close();
-
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -93,7 +92,7 @@ public class Configuration {
     }
 
     public synchronized String getParameterValue(String parameter){
-        return configurationMap.get(parameter);
+        return configurationMap.get(parameter).trim();
     }
 
     public synchronized Map<String, String> getConfiguration(){

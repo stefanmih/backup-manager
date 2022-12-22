@@ -1,4 +1,4 @@
-package com.backupmanager.app.ui.slideshow;
+package com.backupmanager.app.ui.localfiles;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -8,22 +8,22 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
-import com.backupmanager.app.databinding.FragmentSlideshowBinding;
+import com.backupmanager.app.databinding.FragmentLocalFilesBinding;
 
-public class SlideshowFragment extends Fragment {
+public class LocalFilesFragment extends Fragment {
 
-private FragmentSlideshowBinding binding;
+private FragmentLocalFilesBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
             ViewGroup container, Bundle savedInstanceState) {
-        SlideshowViewModel slideshowViewModel =
-                new ViewModelProvider(this).get(SlideshowViewModel.class);
+        LocalFilesViewModel localFilesViewModel =
+                new ViewModelProvider(this).get(LocalFilesViewModel.class);
 
-    binding = FragmentSlideshowBinding.inflate(inflater, container, false);
+    binding = FragmentLocalFilesBinding.inflate(inflater, container, false);
     View root = binding.getRoot();
 
         final TextView textView = binding.textSlideshow;
-        slideshowViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+        localFilesViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
         return root;
     }
 
