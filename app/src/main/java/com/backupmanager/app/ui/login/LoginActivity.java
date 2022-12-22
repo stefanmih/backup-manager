@@ -31,6 +31,7 @@ import com.backupmanager.app.R;
 import com.backupmanager.app.ui.login.LoginViewModel;
 import com.backupmanager.app.ui.login.LoginViewModelFactory;
 import com.backupmanager.app.databinding.ActivityLoginBinding;
+import com.backupmanager.app.utils.Configuration;
 import com.backupmanager.data.AppStorage;
 
 import java.net.HttpURLConnection;
@@ -56,7 +57,7 @@ public class LoginActivity extends AppCompatActivity {
         final EditText passwordEditText = binding.password;
         final Button loginButton = binding.login;
         final ProgressBar loadingProgressBar = binding.loading;
-
+        Configuration.getConfiguration(getApplicationContext()).clearConfiguration();
         loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
             @Override
             public void onChanged(@Nullable LoginFormState loginFormState) {
