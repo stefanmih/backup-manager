@@ -71,7 +71,6 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         final Button loginButton = binding.login;
-        Configuration.getConfiguration(getApplicationContext()).clearConfiguration();
         binding.password.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
