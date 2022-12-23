@@ -10,14 +10,20 @@ import com.backupmanager.data.AppStorage;
 public class DiskViewModel extends ViewModel {
 
     private final MutableLiveData<ListViewAdapter> listView;
+    private final MutableLiveData<String> searchView;
 
     public DiskViewModel() {
+        searchView = new MutableLiveData<>();
         listView = new MutableLiveData<>();
-        listView.setValue(AppStorage.adapter);
     }
 
     public LiveData<ListViewAdapter> getListView() {
         listView.setValue(AppStorage.adapter);
         return listView;
+    }
+
+    public LiveData<String> getSearchView() {
+        searchView.setValue("Search Files");
+        return searchView;
     }
 }

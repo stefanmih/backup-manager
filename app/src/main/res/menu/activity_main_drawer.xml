@@ -9,12 +9,17 @@
             android:icon="?android:attr/actionModeFindDrawable"
             android:title="@string/menu_disk" />
         <item
-            android:id="@+id/nav_settings"
-            android:icon="@android:drawable/ic_menu_sort_by_size"
-            android:title="@string/menu_settings" />
-        <item
             android:id="@+id/nav_local_files"
             android:icon="@android:drawable/ic_menu_save"
             android:title="@string/menu_local_files" />
+        <item
+            android:id="@+id/nav_settings"
+            android:icon="@android:drawable/ic_menu_sort_by_size"
+            android:title="@string/menu_settings" />
+
+        <item
+            android:id="@+id/logout"
+            android:icon="@android:drawable/ic_lock_power_off"
+            android:title="@string/logout" />
     </group>
 </menu>

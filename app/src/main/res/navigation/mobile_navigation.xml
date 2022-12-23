@@ -22,4 +22,5 @@
         android:name="com.backupmanager.app.ui.localfiles.LocalFilesFragment"
         android:label="@string/menu_local_files"
         tools:layout="@layout/fragment_local_files" />
+
 </navigation>
