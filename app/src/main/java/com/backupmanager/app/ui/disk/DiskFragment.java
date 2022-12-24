@@ -13,8 +13,6 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.backupmanager.api.DirectoriesAPI;
-import com.backupmanager.app.MainPageActivity;
-import com.backupmanager.app.R;
 import com.backupmanager.app.databinding.FragmentDiskBinding;
 import com.backupmanager.app.utils.File;
 import com.backupmanager.app.utils.ListViewAdapter;
@@ -26,7 +24,6 @@ import org.json.JSONException;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class DiskFragment extends Fragment {
 
@@ -53,13 +50,13 @@ public class DiskFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                AppStorage.adapter.getFilter().filter(s);
+                AppStorage.adapterRemote.getFilter().filter(s);
                 return false;
             }
 
             @Override
             public boolean onQueryTextChange(String s) {
-                AppStorage.adapter.getFilter().filter(s);
+                AppStorage.adapterRemote.getFilter().filter(s);
                 return false;
             }
         });
@@ -81,8 +78,8 @@ public class DiskFragment extends Fragment {
                     }
                     fileList.add(file);
                 }
-                AppStorage.adapter = new ListViewAdapter(requireContext(), fileList);
-                listView.setAdapter(AppStorage.adapter);
+                AppStorage.adapterRemote = new ListViewAdapter(requireContext(), fileList);
+                listView.setAdapter(AppStorage.adapterRemote);
             }
         }.execute();
     }

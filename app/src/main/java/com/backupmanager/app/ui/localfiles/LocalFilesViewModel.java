@@ -4,16 +4,19 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.backupmanager.app.utils.ListViewAdapter;
+import com.backupmanager.data.AppStorage;
+
 public class LocalFilesViewModel extends ViewModel {
 
-    private final MutableLiveData<String> mText;
+    private final MutableLiveData<ListViewAdapter> listLocal;
 
     public LocalFilesViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is slideshow fragment");
+        listLocal = new MutableLiveData<>();
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public LiveData<ListViewAdapter> getAdapter() {
+        listLocal.setValue(AppStorage.adapterLocal);
+        return listLocal;
     }
 }

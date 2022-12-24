@@ -1,34 +1,23 @@
 package com.backupmanager.app;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.PersistableBundle;
-import android.provider.Settings;
 import android.view.Menu;
-import android.widget.CompoundButton;
+import android.view.View;
 import android.widget.ListView;
-import android.widget.SearchView;
-import android.widget.Switch;
-import android.widget.Toast;
 
 import com.backupmanager.api.DirectoriesAPI;
+import com.backupmanager.app.ui.localfiles.LocalFilesFragment;
 import com.backupmanager.app.ui.login.LoginActivity;
 import com.backupmanager.app.utils.Configuration;
 import com.backupmanager.app.utils.File;
 import com.backupmanager.app.utils.ListViewAdapter;
 import com.backupmanager.data.AppStorage;
+import com.backupmanager.data.LocalFiles;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -43,9 +32,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 public class MainPageActivity extends AppCompatActivity {
 
@@ -76,19 +63,26 @@ public class MainPageActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
 
         getFilesFromRepository("");
-        //listfiles(Objects.requireNonNull(new java.io.File(Environment.getExternalStorageDirectory().getAbsolutePath()).listFiles()));
+
     }
 
     @Override
     public void onBackPressed() {
-        if (DirectoriesAPI.subPath.equals("%5C")) {
-            DirectoriesAPI.subPath = "";
-            MainPageActivity.this.finishAndRemoveTask();
-            MainPageActivity.this.finishAffinity();
-        } else {
-            DirectoriesAPI.subPath = DirectoriesAPI.subPath.substring(0, DirectoriesAPI.subPath.length() - 4);
-            DirectoriesAPI.subPath = DirectoriesAPI.subPath.substring(0, DirectoriesAPI.subPath.lastIndexOf("%5C"));
-            getFilesFromRepository("");
+        if (findViewById(R.id.localList) != null && findViewById(R.id.localList).getVisibility() == View.VISIBLE) {
+            LocalFiles.path = LocalFiles.path.substring(0, LocalFiles.path.lastIndexOf("/"));
+            LocalFiles.path = LocalFiles.path.substring(0, LocalFiles.path.lastIndexOf("/"));
+            AppStorage.adapterLocal = new ListViewAdapter(MainPageActivity.this, LocalFiles.getFiles(""));
+            ((ListView)findViewById(R.id.localList)).setAdapter(AppStorage.adapterLocal);
+        }else {
+            if (DirectoriesAPI.subPath.equals("%5C")) {
+                DirectoriesAPI.subPath = "";
+                MainPageActivity.this.finishAndRemoveTask();
+                MainPageActivity.this.finishAffinity();
+            } else {
+                DirectoriesAPI.subPath = DirectoriesAPI.subPath.substring(0, DirectoriesAPI.subPath.length() - 4);
+                DirectoriesAPI.subPath = DirectoriesAPI.subPath.substring(0, DirectoriesAPI.subPath.lastIndexOf("%5C"));
+                getFilesFromRepository("");
+            }
         }
     }
 
@@ -107,8 +101,8 @@ public class MainPageActivity extends AppCompatActivity {
                     }
                     fileList.add(file);
                 }
-                AppStorage.adapter = new ListViewAdapter(MainPageActivity.this, fileList);
-                ((ListView) findViewById(R.id.files)).setAdapter(AppStorage.adapter);
+                AppStorage.adapterRemote = new ListViewAdapter(MainPageActivity.this, fileList);
+                ((ListView) findViewById(R.id.files)).setAdapter(AppStorage.adapterRemote);
             }
         }.execute();
     }
@@ -129,14 +123,5 @@ public class MainPageActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
-
-    /*public void listfiles(java.io.File[] file){
-        for(java.io.File f: file){
-            if(f.isDirectory())
-                listfiles(Objects.requireNonNull(f.listFiles()));
-            else
-                System.out.println(f.getName());
-        }
-    }*/
 
 }

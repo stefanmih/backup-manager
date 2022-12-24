@@ -18,7 +18,7 @@ public class DiskViewModel extends ViewModel {
     }
 
     public LiveData<ListViewAdapter> getListView() {
-        listView.setValue(AppStorage.adapter);
+        listView.setValue(AppStorage.adapterRemote);
         return listView;
     }
 

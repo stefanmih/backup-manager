@@ -11,6 +11,8 @@ import org.junit.runner.RunWith;
 
 import static org.junit.Assert.*;
 
+import com.backupmanager.data.LocalFiles;
+
 import java.io.File;
 import java.util.Arrays;
 import java.util.Objects;
@@ -27,8 +29,16 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
         assertEquals("com.backupmanager.app", appContext.getPackageName());
+        stringTest();
     }
 
+    public void stringTest(){
+        String s = "/storage/emulated/0/Notifications/Messenger/";
+
+        s = s.substring(0, s.lastIndexOf("/"));
+        s = s.substring(0, s.lastIndexOf("/"));
+        System.out.println(s);
+    }
 
 
 }
