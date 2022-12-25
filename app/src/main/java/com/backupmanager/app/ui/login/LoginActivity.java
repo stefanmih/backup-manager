@@ -132,6 +132,8 @@ public class LoginActivity extends AppCompatActivity {
                         Intent mainPage = new Intent(LoginActivity.this, MainPageActivity.class);
                         mainPage.putExtra("USERNAME", username);
                         mainPage.putExtra("PASSWORD", password);
+                        AppStorage.username = username;
+                        AppStorage.password = password;
                         startActivity(mainPage);
                     }else{
                         runOnUiThread(new Runnable() {

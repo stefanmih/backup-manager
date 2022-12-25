@@ -4,12 +4,12 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.backupmanager.app.utils.ListViewAdapter;
+import com.backupmanager.app.utils.ListViewAdapterDisk;
 import com.backupmanager.data.AppStorage;
 
 public class DiskViewModel extends ViewModel {
 
-    private final MutableLiveData<ListViewAdapter> listView;
+    private final MutableLiveData<ListViewAdapterDisk> listView;
     private final MutableLiveData<String> searchView;
 
     public DiskViewModel() {
@@ -17,7 +17,7 @@ public class DiskViewModel extends ViewModel {
         listView = new MutableLiveData<>();
     }
 
-    public LiveData<ListViewAdapter> getListView() {
+    public LiveData<ListViewAdapterDisk> getListView() {
         listView.setValue(AppStorage.adapterRemote);
         return listView;
     }

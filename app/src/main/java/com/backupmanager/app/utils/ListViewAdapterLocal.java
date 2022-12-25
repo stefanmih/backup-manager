@@ -2,7 +2,6 @@ package com.backupmanager.app.utils;
 
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -10,28 +9,24 @@ import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import com.backupmanager.app.MainPageActivity;
+import com.backupmanager.api.BackupAPI;
 import com.backupmanager.app.R;
-import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Objects;
 
-public class ListViewAdapter extends ArrayAdapter<File> {
+public class ListViewAdapterLocal extends ArrayAdapter<File> {
 
     private Context context;
     private List<File> fileList;
 
-    public ListViewAdapter(@NonNull Context context, List<File> arrayList) {
+    public ListViewAdapterLocal(@NonNull Context context, List<File> arrayList) {
         super(context, 0, arrayList);
         this.context = context;
         this.fileList = new ArrayList<>(arrayList);
@@ -49,10 +44,20 @@ public class ListViewAdapter extends ArrayAdapter<File> {
         options.setOnClickListener(e->{
             PopupMenu popupMenu = new PopupMenu(context, options);
 
-            popupMenu.getMenuInflater().inflate(R.menu.popup_menu, popupMenu.getMenu());
+            popupMenu.getMenuInflater().inflate(R.menu.popup_menu_local, popupMenu.getMenu());
             popupMenu.setOnMenuItemClickListener(item-> {
-                Toast.makeText(context, "You Clicked " + item.getTitle(), Toast.LENGTH_SHORT).show();
-                return true;
+                if(item.getTitle().equals("Upload")){
+                    if(getItem(position).isDirectory()) {
+                        List<String> paths = new ArrayList<>();
+                        for(java.io.File f : Objects.requireNonNull(new java.io.File(getItem(position).getLocalPath()).listFiles())){
+                            paths.add(f.getAbsolutePath());
+                        }
+                        BackupAPI.requestFilesUpload(paths);
+                    }else{
+                        BackupAPI.requestFilesUpload(Arrays.asList(getItem(position).getLocalPath()));
+                    }
+                }
+                return false;
             });
             popupMenu.show();
         });

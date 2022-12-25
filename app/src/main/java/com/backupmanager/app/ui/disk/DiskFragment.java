@@ -15,7 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.backupmanager.api.DirectoriesAPI;
 import com.backupmanager.app.databinding.FragmentDiskBinding;
 import com.backupmanager.app.utils.File;
-import com.backupmanager.app.utils.ListViewAdapter;
+import com.backupmanager.app.utils.ListViewAdapterDisk;
 import com.backupmanager.data.AppStorage;
 import com.google.gson.Gson;
 
@@ -46,6 +46,12 @@ public class DiskFragment extends Fragment {
             File selectedFile = (File) adapterView.getItemAtPosition(i);
             if (selectedFile.isDirectory())
                 getFilesFromRepository(selectedFile.getName());
+        });
+        binding.imageView2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                binding.imageView2.setSelected(true);
+            }
         });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
@@ -78,7 +84,7 @@ public class DiskFragment extends Fragment {
                     }
                     fileList.add(file);
                 }
-                AppStorage.adapterRemote = new ListViewAdapter(requireContext(), fileList);
+                AppStorage.adapterRemote = new ListViewAdapterDisk(requireContext(), fileList);
                 listView.setAdapter(AppStorage.adapterRemote);
             }
         }.execute();

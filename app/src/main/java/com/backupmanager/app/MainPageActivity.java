@@ -8,14 +8,13 @@ import android.view.View;
 import android.widget.ListView;
 
 import com.backupmanager.api.DirectoriesAPI;
-import com.backupmanager.app.ui.localfiles.LocalFilesFragment;
 import com.backupmanager.app.ui.login.LoginActivity;
 import com.backupmanager.app.utils.Configuration;
 import com.backupmanager.app.utils.File;
-import com.backupmanager.app.utils.ListViewAdapter;
+import com.backupmanager.app.utils.ListViewAdapterDisk;
+import com.backupmanager.app.utils.ListViewAdapterLocal;
 import com.backupmanager.data.AppStorage;
 import com.backupmanager.data.LocalFiles;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.navigation.NavigationView;
 
 import androidx.navigation.NavController;
@@ -50,8 +49,7 @@ public class MainPageActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarMainPage.toolbar);
-        binding.appBarMainPage.fab.setOnClickListener(view -> Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show());
+        binding.appBarMainPage.fab.setOnClickListener(view -> backup());
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
         mAppBarConfiguration = new AppBarConfiguration.Builder(
@@ -66,12 +64,15 @@ public class MainPageActivity extends AppCompatActivity {
 
     }
 
+    private void backup() {
+    }
+
     @Override
     public void onBackPressed() {
         if (findViewById(R.id.localList) != null && findViewById(R.id.localList).getVisibility() == View.VISIBLE) {
             LocalFiles.path = LocalFiles.path.substring(0, LocalFiles.path.lastIndexOf("/"));
             LocalFiles.path = LocalFiles.path.substring(0, LocalFiles.path.lastIndexOf("/"));
-            AppStorage.adapterLocal = new ListViewAdapter(MainPageActivity.this, LocalFiles.getFiles(""));
+            AppStorage.adapterLocal = new ListViewAdapterLocal(MainPageActivity.this, LocalFiles.getFiles(""));
             ((ListView)findViewById(R.id.localList)).setAdapter(AppStorage.adapterLocal);
         }else {
             if (DirectoriesAPI.subPath.equals("%5C")) {
@@ -101,7 +102,7 @@ public class MainPageActivity extends AppCompatActivity {
                     }
                     fileList.add(file);
                 }
-                AppStorage.adapterRemote = new ListViewAdapter(MainPageActivity.this, fileList);
+                AppStorage.adapterRemote = new ListViewAdapterDisk(MainPageActivity.this, fileList);
                 ((ListView) findViewById(R.id.files)).setAdapter(AppStorage.adapterRemote);
             }
         }.execute();
