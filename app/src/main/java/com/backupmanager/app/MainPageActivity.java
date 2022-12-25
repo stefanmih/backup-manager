@@ -1,8 +1,14 @@
 package com.backupmanager.app;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ListView;
@@ -17,6 +23,8 @@ import com.backupmanager.data.AppStorage;
 import com.backupmanager.data.LocalFiles;
 import com.google.android.material.navigation.NavigationView;
 
+import androidx.annotation.Nullable;
+import androidx.core.graphics.PathUtils;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
@@ -66,6 +74,7 @@ public class MainPageActivity extends AppCompatActivity {
 
     private void backup() {
     }
+
 
     @Override
     public void onBackPressed() {

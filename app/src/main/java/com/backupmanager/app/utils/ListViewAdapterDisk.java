@@ -1,6 +1,8 @@
 package com.backupmanager.app.utils;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.backupmanager.app.R;
+import com.backupmanager.app.ui.DetailsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +47,18 @@ public class ListViewAdapterDisk extends ArrayAdapter<File> {
 
             popupMenu.getMenuInflater().inflate(R.menu.popup_menu_disk, popupMenu.getMenu());
             popupMenu.setOnMenuItemClickListener(item-> {
-                Toast.makeText(context, "You Clicked " + item.getTitle(), Toast.LENGTH_SHORT).show();
+                if(item.getTitle().equals("Properties")){
+                    Intent properties = new Intent(context.getApplicationContext(), DetailsActivity.class);
+                    File file = getItem(position);
+                    properties.putExtra("FILE_NAME", file.getName());
+                    properties.putExtra("FILE_SIZE", file.getSize());
+                    properties.putExtra("FILE_DIR", file.isDirectory());
+                    properties.putExtra("FILE_EXT", file.getExtension());
+                    properties.putExtra("FILE_LPATH", file.getRemotePath());
+                    properties.putExtra("FILE_HASH", file.getHash());
+                    properties.putExtra("FILE_RPATH", file.getLocalPath());
+                    context.startActivity(properties);
+                }
                 return true;
             });
             popupMenu.show();

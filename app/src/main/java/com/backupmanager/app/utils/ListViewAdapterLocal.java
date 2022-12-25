@@ -1,6 +1,7 @@
 package com.backupmanager.app.utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,6 +16,7 @@ import androidx.annotation.Nullable;
 
 import com.backupmanager.api.BackupAPI;
 import com.backupmanager.app.R;
+import com.backupmanager.app.ui.DetailsActivity;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,6 +58,18 @@ public class ListViewAdapterLocal extends ArrayAdapter<File> {
                     }else{
                         BackupAPI.requestFilesUpload(Arrays.asList(getItem(position).getLocalPath()));
                     }
+                }
+                if(item.getTitle().equals("Properties")){
+                    Intent properties = new Intent(context.getApplicationContext(), DetailsActivity.class);
+                    File file = getItem(position);
+                    properties.putExtra("FILE_NAME", file.getName());
+                    properties.putExtra("FILE_SIZE", file.getSize());
+                    properties.putExtra("FILE_DIR", file.isDirectory());
+                    properties.putExtra("FILE_EXT", file.getExtension());
+                    properties.putExtra("FILE_LPATH", file.getLocalPath());
+                    properties.putExtra("FILE_HASH", file.getHash());
+                    properties.putExtra("FILE_RPATH", file.getRemotePath());
+                    context.startActivity(properties);
                 }
                 return false;
             });

@@ -23,6 +23,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class DiskFragment extends Fragment {
@@ -47,10 +48,16 @@ public class DiskFragment extends Fragment {
             if (selectedFile.isDirectory())
                 getFilesFromRepository(selectedFile.getName());
         });
-        binding.imageView2.setOnClickListener(new View.OnClickListener() {
+        binding.imageView4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                binding.imageView2.setSelected(true);
+                AppStorage.adapterRemote.sort(new Comparator<File>() {
+                    @Override
+                    public int compare(File file, File t1) {
+                        return -file.getName().compareTo(t1.getName());
+                    }
+                });
+                //binding.files.setAdapter(AppStorage.adapterRemote);
             }
         });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
