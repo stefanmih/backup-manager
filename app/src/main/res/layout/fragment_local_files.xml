@@ -7,6 +7,31 @@
     android:layout_height="match_parent"
     tools:context=".ui.localfiles.LocalFilesFragment">
 
+    <SearchView
+        android:id="@+id/search"
+        android:layout_width="351dp"
+        android:layout_height="36dp"
+        android:iconifiedByDefault="false"
+        android:queryHint="Search files"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.064" />
+
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="34dp"
+        android:layout_height="36dp"
+        android:src="@android:drawable/ic_menu_sort_alphabetically"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.981"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.063" />
+
     <ListView
         android:id="@+id/localList"
         android:layout_width="410dp"
