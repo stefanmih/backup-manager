@@ -7,7 +7,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class Configuration {
@@ -16,11 +18,16 @@ public class Configuration {
 
     private Context context;
     private File confFile;
+    private File backupFile;
     private Map<String, String> configurationMap = new HashMap<>();
 
     public Configuration(Context context) {
         this.context = context;
         confFile = new File(context.getFilesDir().getAbsolutePath(), "configuration.cfg");
+        backupFile = new File(context.getFilesDir().getAbsolutePath(), "backupfiles.cfg");
+        if (!backupFile.exists()) {
+            generateBackupFile();
+        }
         if (!confFile.exists()) {
             generateFile();
         }else if(confFile.length() < 5){
@@ -33,7 +40,15 @@ public class Configuration {
         }
     }
 
-    private synchronized void generateFile() {
+    private void generateBackupFile() {
+        try {
+            backupFile.createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void generateFile() {
         try {
             confFile.createNewFile();
         } catch (IOException e) {
@@ -41,12 +56,12 @@ public class Configuration {
         }
     }
 
-    private synchronized void writeToFile(String content) {
+    private void writeToFile(String content) {
         configurationMap.put(content.split("=")[0].trim(), content.split("=")[1].trim());
         writeToFile();
     }
 
-    private synchronized void writeToFile() {
+    private void writeToFile() {
         try {
             clearConfiguration();
             FileWriter writer = new FileWriter(confFile, true);
@@ -60,7 +75,7 @@ public class Configuration {
         }
     }
 
-    private synchronized Map<String, String> readConfiguration() {
+    private Map<String, String> readConfiguration() {
         BufferedReader reader;
         Map<String, String> confMap = new HashMap<>();
         try {
@@ -78,7 +93,7 @@ public class Configuration {
         return new HashMap<>();
     }
 
-    public synchronized void clearConfiguration() {
+    public void clearConfiguration() {
         try {
             confFile.delete();
             generateFile();
@@ -87,16 +102,21 @@ public class Configuration {
         }
     }
 
-    public synchronized void addOrModifyConfiguration(String parameter, String value) {
+    public void clearBackup() {
+        try {
+            backupFile.delete();
+            generateFile();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void addOrModifyConfiguration(String parameter, String value) {
         writeToFile(parameter + "=" + value + "\n");
     }
 
-    public synchronized String getParameterValue(String parameter){
+    public String getParameterValue(String parameter){
         return configurationMap.get(parameter).trim();
-    }
-
-    public synchronized Map<String, String> getConfiguration(){
-        return configurationMap;
     }
 
     public static Configuration getConfiguration(Context context) {
@@ -104,5 +124,50 @@ public class Configuration {
             configuration = new Configuration(context);
         }
         return configuration;
+    }
+
+    public  List<String> getFilesForBackup(){
+        List<String> list = new ArrayList<>();
+        BufferedReader reader;
+        try {
+            reader = new BufferedReader(new FileReader(backupFile));
+            String line = reader.readLine();
+            while (line != null) {
+                list.add(line);
+                line = reader.readLine();
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public void addFileForBackup(String path) {
+        try {
+            FileWriter writer = new FileWriter(backupFile, true);
+            writer.append(path).append("\n");
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void removeFileFromBackup(String path) {
+        try {
+            List<String> list = getFilesForBackup();
+            clearBackup();
+            generateBackupFile();
+            FileWriter writer = new FileWriter(backupFile, true);
+            for (String s : list) {
+                if(!s.trim().equals(path.trim()))
+                    writer.append(s).append("\n");
+            }
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

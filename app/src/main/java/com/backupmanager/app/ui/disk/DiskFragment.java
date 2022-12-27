@@ -57,7 +57,6 @@ public class DiskFragment extends Fragment {
                         return -file.getName().compareTo(t1.getName());
                     }
                 });
-                //binding.files.setAdapter(AppStorage.adapterRemote);
             }
         });
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {

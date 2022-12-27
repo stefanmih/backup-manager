@@ -21,6 +21,7 @@ import com.backupmanager.app.ui.DetailsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class ListViewAdapterDisk extends ArrayAdapter<File> {
 
@@ -91,7 +92,7 @@ public class ListViewAdapterDisk extends ArrayAdapter<File> {
                 FilterResults results = new FilterResults();
                 List<File> filteredList = new ArrayList<>();
                 for(File file : fileList){
-                    if(file.getName().contains(charSequence)){
+                    if(file.getName().toLowerCase(Locale.ROOT).contains(charSequence.toString().toLowerCase(Locale.ROOT))){
                         filteredList.add(file);
                     }
                 }

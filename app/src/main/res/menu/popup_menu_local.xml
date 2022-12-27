@@ -8,6 +8,16 @@
         android:title="Upload"/>
 
     <item
+        android:id="@+id/addbackup"
+        android:icon="@android:drawable/ic_menu_sort_by_size"
+        android:title="Add to backup" />
+
+    <item
+        android:id="@+id/removebackup"
+        android:icon="@android:drawable/ic_menu_sort_by_size"
+        android:title="Remove from backup" />
+
+    <item
         android:id="@+id/properties"
         android:icon="@android:drawable/ic_menu_sort_by_size"
         android:title="Properties" />

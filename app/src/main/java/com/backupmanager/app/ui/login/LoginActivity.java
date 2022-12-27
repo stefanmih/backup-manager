@@ -69,7 +69,6 @@ public class LoginActivity extends AppCompatActivity {
 
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
         final Button loginButton = binding.login;
         binding.password.addTextChangedListener(new TextWatcher() {
             @Override

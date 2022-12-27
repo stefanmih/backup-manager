@@ -8,6 +8,7 @@ public class File {
     private String hash;
     private boolean directory;
     private String extension;
+    private boolean backup;
 
     public File() {
     }
@@ -76,6 +77,14 @@ public class File {
 
     public void setExtension(String extension) {
         this.extension = extension;
+    }
+
+    public boolean isBackup() {
+        return backup;
+    }
+
+    public void setBackup(boolean backup) {
+        this.backup = backup;
     }
 
     @Override

@@ -1,7 +1,9 @@
 package com.backupmanager.app.utils;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +19,13 @@ import androidx.annotation.Nullable;
 import com.backupmanager.api.BackupAPI;
 import com.backupmanager.app.R;
 import com.backupmanager.app.ui.DetailsActivity;
+import com.backupmanager.data.AppStorage;
+import com.backupmanager.data.LocalFiles;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 
 public class ListViewAdapterLocal extends ArrayAdapter<File> {
@@ -34,15 +39,19 @@ public class ListViewAdapterLocal extends ArrayAdapter<File> {
         this.fileList = new ArrayList<>(arrayList);
     }
 
+    @SuppressLint("SetTextI18n")
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
         View currentItemView = convertView;
         if (currentItemView == null) {
-            currentItemView = LayoutInflater.from(getContext()).inflate(R.layout.row_item, parent, false);
+            currentItemView = LayoutInflater.from(getContext()).inflate(R.layout.row_item_local, parent, false);
         }
+        LocalFiles.context = context;
         ImageView options = currentItemView.findViewById(R.id.imageView6);
+        ((ImageView) currentItemView.findViewById(R.id.imageView5)).setImageResource(android.R.drawable.stat_notify_sync);
+        View finalCurrentItemView = currentItemView;
         options.setOnClickListener(e->{
             PopupMenu popupMenu = new PopupMenu(context, options);
 
@@ -71,6 +80,14 @@ public class ListViewAdapterLocal extends ArrayAdapter<File> {
                     properties.putExtra("FILE_RPATH", file.getRemotePath());
                     context.startActivity(properties);
                 }
+                if(item.getTitle().equals("Add to backup")){
+                    Configuration.getConfiguration(context).addFileForBackup(getItem(position).getLocalPath());
+                    (finalCurrentItemView.findViewById(R.id.imageView5)).setVisibility(View.VISIBLE);
+                }
+                if(item.getTitle().equals("Remove from backup")){
+                    Configuration.getConfiguration(context).removeFileFromBackup(getItem(position).getLocalPath());
+                    (finalCurrentItemView.findViewById(R.id.imageView5)).setVisibility(View.INVISIBLE);
+                }
                 return false;
             });
             popupMenu.show();
@@ -83,6 +100,12 @@ public class ListViewAdapterLocal extends ArrayAdapter<File> {
             image.setImageResource(R.drawable.folder);
         }else{
             image.setImageResource(R.drawable.file);
+        }
+
+        if(file.isBackup()){
+            (currentItemView.findViewById(R.id.imageView5)).setVisibility(View.VISIBLE);
+        }else{
+            (currentItemView.findViewById(R.id.imageView5)).setVisibility(View.INVISIBLE);
         }
 
         TextView textView1 = currentItemView.findViewById(R.id.textView1);
@@ -103,7 +126,7 @@ public class ListViewAdapterLocal extends ArrayAdapter<File> {
                 FilterResults results = new FilterResults();
                 List<File> filteredList = new ArrayList<>();
                 for(File file : fileList){
-                    if(file.getName().contains(charSequence)){
+                    if(file.getName().toLowerCase(Locale.ROOT).contains(charSequence.toString().toLowerCase(Locale.ROOT))){
                         filteredList.add(file);
                     }
                 }

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -38,6 +39,19 @@ public class LocalFilesFragment extends Fragment {
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 AppStorage.adapterLocal = new ListViewAdapterLocal(requireContext(), LocalFiles.getFiles(((File) adapterView.getItemAtPosition(i)).getName()));
                 listView.setAdapter(AppStorage.adapterLocal);
+            }
+        });
+        binding.search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                AppStorage.adapterLocal.getFilter().filter(s);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                AppStorage.adapterLocal.getFilter().filter(s);
+                return false;
             }
         });
         return root;
