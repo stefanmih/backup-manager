@@ -1,6 +1,8 @@
 package com.backupmanager.app.ui.disk;
 
 import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +15,9 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.backupmanager.api.DirectoriesAPI;
+import com.backupmanager.app.R;
 import com.backupmanager.app.databinding.FragmentDiskBinding;
+import com.backupmanager.app.utils.Configuration;
 import com.backupmanager.app.utils.File;
 import com.backupmanager.app.utils.ListViewAdapterDisk;
 import com.backupmanager.data.AppStorage;
@@ -45,8 +49,9 @@ public class DiskFragment extends Fragment {
         diskViewModel.getSearchView().observe(getViewLifecycleOwner(), searchView::setQueryHint);
         listView.setOnItemClickListener((adapterView, view, i, l) -> {
             File selectedFile = (File) adapterView.getItemAtPosition(i);
-            if (selectedFile.isDirectory())
+            if (selectedFile.isDirectory()) {
                 getFilesFromRepository(selectedFile.getName());
+            }
         });
         binding.imageView4.setOnClickListener(new View.OnClickListener() {
             @Override

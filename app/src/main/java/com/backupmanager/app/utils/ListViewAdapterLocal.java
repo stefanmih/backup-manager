@@ -81,15 +81,32 @@ public class ListViewAdapterLocal extends ArrayAdapter<File> {
                     context.startActivity(properties);
                 }
                 if(item.getTitle().equals("Add to backup")){
-                    Configuration.getConfiguration(context).addFileForBackup(getItem(position).getLocalPath());
+                    List<String> paths = new ArrayList<>();
+                    getFilesToBackup(getItem(position).getLocalPath(), paths);
+                    for(String path : paths) {
+                        Configuration.getConfiguration(context).addFileForBackup(path);
+                    }
+                    getItem(position).setBackup(true);
                     (finalCurrentItemView.findViewById(R.id.imageView5)).setVisibility(View.VISIBLE);
                 }
                 if(item.getTitle().equals("Remove from backup")){
-                    Configuration.getConfiguration(context).removeFileFromBackup(getItem(position).getLocalPath());
+                    List<String> paths = new ArrayList<>();
+                    getFilesToBackup(getItem(position).getLocalPath(), paths);
+                    getItem(position).setBackup(false);
+                    for(String path : paths) {
+                        Configuration.getConfiguration(context).removeFileFromBackup(path);
+                    }
                     (finalCurrentItemView.findViewById(R.id.imageView5)).setVisibility(View.INVISIBLE);
                 }
                 return false;
             });
+            if(finalCurrentItemView.findViewById(R.id.imageView5).getVisibility() == View.VISIBLE){
+                popupMenu.getMenu().getItem(1).setVisible(false);
+                popupMenu.getMenu().getItem(2).setVisible(true);
+            }else{
+                popupMenu.getMenu().getItem(1).setVisible(true);
+                popupMenu.getMenu().getItem(2).setVisible(false);
+            }
             popupMenu.show();
         });
 
@@ -102,7 +119,7 @@ public class ListViewAdapterLocal extends ArrayAdapter<File> {
             image.setImageResource(R.drawable.file);
         }
 
-        if(file.isBackup()){
+        if(file.isBackup() || checkIfFolderIsInBackup(file.getLocalPath())){
             (currentItemView.findViewById(R.id.imageView5)).setVisibility(View.VISIBLE);
         }else{
             (currentItemView.findViewById(R.id.imageView5)).setVisibility(View.INVISIBLE);
@@ -115,6 +132,25 @@ public class ListViewAdapterLocal extends ArrayAdapter<File> {
         textView2.setText(file.getSize() + "");
 
         return currentItemView;
+    }
+
+    private void getFilesToBackup(String root, final List<String> paths){
+        if(new java.io.File(root).isDirectory()){
+            for(java.io.File f : Objects.requireNonNull(new java.io.File(root).listFiles())){
+                getFilesToBackup(f.getAbsolutePath(), paths);
+            }
+        }else{
+            paths.add(root);
+        }
+    }
+
+    private boolean checkIfFolderIsInBackup(String path){
+        for(String s : Configuration.getConfiguration(context).getFilesForBackup()){
+            if(s.contains(path)){
+                return true;
+            }
+        }
+        return false;
     }
 
     @NonNull

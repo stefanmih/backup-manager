@@ -8,11 +8,13 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.View;
 import android.widget.ListView;
 
+import com.backupmanager.api.BackupAPI;
 import com.backupmanager.api.DirectoriesAPI;
 import com.backupmanager.app.ui.login.LoginActivity;
 import com.backupmanager.app.utils.Configuration;
@@ -39,7 +41,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class MainPageActivity extends AppCompatActivity {
 
@@ -67,12 +71,13 @@ public class MainPageActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main_page);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
-
         getFilesFromRepository("");
 
     }
 
     private void backup() {
+        System.out.println(Configuration.getConfiguration(getApplicationContext()).getFilesForBackup());
+        BackupAPI.requestFilesUpload(Configuration.getConfiguration(getApplicationContext()).getFilesForBackup());
     }
 
 
@@ -120,6 +125,7 @@ public class MainPageActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_page, menu);
+        menu.getItem(1).setOnMenuItemClickListener(mi ->{ Configuration.getConfiguration(getApplicationContext()).removeFromBackup(); return true;});
         findViewById(R.id.logout).setOnClickListener(e-> {
             Configuration.getConfiguration(getApplicationContext()).addOrModifyConfiguration("autologin", "false");
             startActivity(new Intent(this, LoginActivity.class));

@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -106,6 +107,16 @@ public class Configuration {
         try {
             backupFile.delete();
             generateFile();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void removeFromBackup() {
+        try {
+            PrintWriter writer = new PrintWriter(backupFile);
+            writer.print("");
+            writer.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

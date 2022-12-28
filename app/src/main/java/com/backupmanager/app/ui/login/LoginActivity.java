@@ -66,9 +66,10 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        if(!Configuration.getConfiguration(getApplicationContext()).getParameterValue("autologin").equals("true")) {
+            setContentView(binding.getRoot());
+        }
         final Button loginButton = binding.login;
         binding.password.addTextChangedListener(new TextWatcher() {
             @Override
@@ -135,12 +136,7 @@ public class LoginActivity extends AppCompatActivity {
                         AppStorage.password = password;
                         startActivity(mainPage);
                     }else{
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                showLoginFailed(R.string.login_failed);
-                            }
-                        });
+                        runOnUiThread(() -> showLoginFailed(R.string.login_failed));
                     }
                 }catch (Exception e){
                     e.printStackTrace();
