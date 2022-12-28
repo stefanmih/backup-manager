@@ -35,6 +35,9 @@ public class Configuration {
             configurationMap.put("autologin", "true");
             configurationMap.put("username", "admin");
             configurationMap.put("password", "admin");
+            configurationMap.put("ip", "localhost");
+            configurationMap.put("http", "8080");
+            configurationMap.put("tcp", "5000");
             writeToFile();
         }else{
             configurationMap = readConfiguration();

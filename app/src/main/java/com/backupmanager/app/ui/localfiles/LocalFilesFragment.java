@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.SearchView;
 
 import androidx.annotation.NonNull;
@@ -37,8 +38,10 @@ public class LocalFilesFragment extends Fragment {
         binding = FragmentLocalFilesBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         final ListView listView = binding.localList;
+        final ProgressBar progressBar = binding.progressBar;
         AppStorage.adapterLocal = new ListViewAdapterLocal(requireContext(), LocalFiles.getFiles(""));
         localFilesViewModel.getAdapter().observe(getViewLifecycleOwner(), listView::setAdapter);
+        localFilesViewModel.getProgressBar().observe(getViewLifecycleOwner(), progressBar::setVisibility);
         listView.setOnItemClickListener((adapterView, view, i, l) -> {
             if (((File) adapterView.getItemAtPosition(i)).isDirectory()) {
                 AppStorage.adapterLocal = new ListViewAdapterLocal(requireContext(), LocalFiles.getFiles(((File) adapterView.getItemAtPosition(i)).getName()));
@@ -53,6 +56,8 @@ public class LocalFilesFragment extends Fragment {
                 startActivity(Intent.createChooser(intent, "Open with:"));
             }
         });
+        AppStorage.progressBarLocal = binding.progressBar;
+        AppStorage.progressBarLocal.setVisibility(View.INVISIBLE);
         binding.search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {

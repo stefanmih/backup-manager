@@ -46,6 +46,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.backupmanager.app.AdvancedSettingsActivity;
 import com.backupmanager.app.BuildConfig;
 import com.backupmanager.app.MainPageActivity;
 import com.backupmanager.app.R;
@@ -55,6 +56,7 @@ import com.backupmanager.data.AppStorage;
 
 import java.io.File;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -67,9 +69,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
-        if(!Configuration.getConfiguration(getApplicationContext()).getParameterValue("autologin").equals("true")) {
-            setContentView(binding.getRoot());
-        }
+        setContentView(binding.getRoot());
         final Button loginButton = binding.login;
         binding.password.addTextChangedListener(new TextWatcher() {
             @Override
@@ -87,25 +87,47 @@ public class LoginActivity extends AppCompatActivity {
 
             }
         });
+        AppStorage.ip = Configuration.getConfiguration(getApplicationContext()).getParameterValue("ip");
+        AppStorage.httpPort = Configuration.getConfiguration(getApplicationContext()).getParameterValue("http");
+        AppStorage.tcpPort = Configuration.getConfiguration(getApplicationContext()).getParameterValue("tcp");
+        AppStorage.baseUrl = "http://" + AppStorage.ip + ":" + AppStorage.httpPort;
         requestPermission();
-        loginButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                login(((TextView)findViewById(R.id.username)).getText().toString(), ((TextView)findViewById(R.id.password)).getText().toString());
-            }
-        });
-        checkAutoLogin();
+        loginButton.setOnClickListener(v -> login(((TextView) findViewById(R.id.username)).getText().toString(), ((TextView) findViewById(R.id.password)).getText().toString()));
+        binding.login2.setOnClickListener(view -> startActivity(new Intent(LoginActivity.this, AdvancedSettingsActivity.class)));
+        checkConnection(Configuration.getConfiguration(getApplicationContext()).getParameterValue("username"), Configuration.getConfiguration(getApplicationContext()).getParameterValue("password"));
     }
 
-    private void requestPermission(){
-        if(SDK_INT >= Build.VERSION_CODES.R){
+    private void checkConnection(String username, String password) {
+        binding.progressBar2.setVisibility(View.VISIBLE);
+        if (SDK_INT >= Build.VERSION_CODES.N) {
+            binding.progressBar2.setProgress(0, true);
+        }
+        new Thread(() -> {
+            try {
+                URL url = new URL(AppStorage.baseUrl + "/login");
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestProperty("Authorization", "Basic " + new String(Base64.encode((username + ":" + password).getBytes(StandardCharsets.UTF_8), 0)));
+                if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                    checkAutoLogin();
+                    runOnUiThread(() -> binding.progressBar2.setVisibility(View.INVISIBLE));
+                } else {
+                    serverError();
+                }
+            } catch (Exception e) {
+                serverError();
+            }
+        }).start();
+    }
+
+    private void requestPermission() {
+        if (SDK_INT >= Build.VERSION_CODES.R) {
             try {
                 Intent intent = new Intent();
                 intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
                 Uri uri = Uri.fromParts("package", this.getPackageName(), null);
                 intent.setData(uri);
                 intentActivityResultLauncher.launch(intent);
-            }catch (Exception e){
+            } catch (Exception e) {
                 Intent intent = new Intent();
                 intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
                 intentActivityResultLauncher.launch(intent);
@@ -120,25 +142,35 @@ public class LoginActivity extends AppCompatActivity {
         }
     });
 
-    private void login(String username, String password){
-        @SuppressLint("StaticFieldLeak") final AsyncTask<URL, String, String> task = new AsyncTask<URL, String, String>(){
+    private void login(String username, String password) {
+        @SuppressLint("StaticFieldLeak") final AsyncTask<URL, String, String> task = new AsyncTask<URL, String, String>() {
             @Override
             protected String doInBackground(URL... urls) {
-                try{
+                runOnUiThread(()->{
+                    binding.progressBar2.setVisibility(View.VISIBLE);
+                    if (SDK_INT >= Build.VERSION_CODES.N) {
+                        binding.progressBar2.setProgress(0, true);
+                    }
+                });
+                try {
                     URL url = new URL(AppStorage.baseUrl + "/login");
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.setRequestProperty("Authorization" , "Basic " + new String(Base64.encode((username + ":" + password).getBytes(StandardCharsets.UTF_8), 0)));
-                    if(connection.getResponseCode() == HttpURLConnection.HTTP_OK){
+                    connection.setRequestProperty("Authorization", "Basic " + new String(Base64.encode((username + ":" + password).getBytes(StandardCharsets.UTF_8), 0)));
+                    if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
                         Intent mainPage = new Intent(LoginActivity.this, MainPageActivity.class);
                         mainPage.putExtra("USERNAME", username);
                         mainPage.putExtra("PASSWORD", password);
                         AppStorage.username = username;
                         AppStorage.password = password;
+                        Configuration.getConfiguration(getApplicationContext()).addOrModifyConfiguration("username", username);
+                        Configuration.getConfiguration(getApplicationContext()).addOrModifyConfiguration("password", password);
                         startActivity(mainPage);
-                    }else{
+                    } else {
+                        serverError();
                         runOnUiThread(() -> showLoginFailed(R.string.login_failed));
                     }
-                }catch (Exception e){
+                } catch (Exception e) {
+                    serverError();
                     e.printStackTrace();
                 }
                 return null;
@@ -148,9 +180,16 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void checkAutoLogin() {
-        if(Configuration.getConfiguration(getApplicationContext()).getParameterValue("autologin").equals("true")){
+        if (Configuration.getConfiguration(getApplicationContext()).getParameterValue("autologin").equals("true")) {
             login(Configuration.getConfiguration(getApplicationContext()).getParameterValue("username"), Configuration.getConfiguration(getApplicationContext()).getParameterValue("password"));
         }
+    }
+
+    private void serverError() {
+        runOnUiThread(() -> {
+            Toast.makeText(LoginActivity.this, "Server connection failed.", Toast.LENGTH_LONG).show();
+            binding.progressBar2.setVisibility(View.INVISIBLE);
+        });
     }
 
     private void showLoginFailed(@StringRes Integer errorString) {

@@ -12,7 +12,10 @@ import android.os.PersistableBundle;
 import android.provider.MediaStore;
 import android.view.Menu;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.backupmanager.api.BackupAPI;
 import com.backupmanager.api.DirectoriesAPI;
@@ -71,15 +74,20 @@ public class MainPageActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main_page);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+        binding.appBarMainPage.fab.setImageResource(android.R.drawable.ic_popup_sync);
         getFilesFromRepository("");
-
+        AppStorage.activity = this;
     }
 
     private void backup() {
-        System.out.println(Configuration.getConfiguration(getApplicationContext()).getFilesForBackup());
-        BackupAPI.requestFilesUpload(Configuration.getConfiguration(getApplicationContext()).getFilesForBackup());
+        if(findViewById(R.id.localList) != null && findViewById(R.id.localList).getVisibility() == View.VISIBLE) {
+            BackupAPI.requestFilesUpload(Configuration.getConfiguration(getApplicationContext()).getFilesForBackup());
+            Toast.makeText(getApplicationContext(), "Uploading selected files...", Toast.LENGTH_LONG).show();
+        } else {
+            getFilesFromRepository("");
+            Toast.makeText(getApplicationContext(), "Refreshing repository...", Toast.LENGTH_LONG).show();
+        }
     }
-
 
     @Override
     public void onBackPressed() {
@@ -126,6 +134,9 @@ public class MainPageActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main_page, menu);
         menu.getItem(1).setOnMenuItemClickListener(mi ->{ Configuration.getConfiguration(getApplicationContext()).removeFromBackup(); return true;});
+        menu.getItem(0).setOnMenuItemClickListener(mi ->{ startActivity(new Intent(this, AdvancedSettingsActivity.class)); return true;});
+        ((ImageView)binding.navView.findViewById(R.id.imageView)).setImageResource(android.R.drawable.stat_notify_sync);
+        ((TextView)binding.navView.findViewById(R.id.textView)).setText(AppStorage.username);
         findViewById(R.id.logout).setOnClickListener(e-> {
             Configuration.getConfiguration(getApplicationContext()).addOrModifyConfiguration("autologin", "false");
             startActivity(new Intent(this, LoginActivity.class));

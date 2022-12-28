@@ -51,13 +51,13 @@ public class ListViewAdapterDisk extends ArrayAdapter<File> {
                 if(item.getTitle().equals("Properties")){
                     Intent properties = new Intent(context.getApplicationContext(), DetailsActivity.class);
                     File file = getItem(position);
-                    properties.putExtra("FILE_NAME", file.getName());
+                    properties.putExtra("FILE_NAME", checkIfEmpty(file.getName()));
                     properties.putExtra("FILE_SIZE", file.getSize());
                     properties.putExtra("FILE_DIR", file.isDirectory());
-                    properties.putExtra("FILE_EXT", file.getExtension());
-                    properties.putExtra("FILE_LPATH", file.getRemotePath());
-                    properties.putExtra("FILE_HASH", file.getHash());
-                    properties.putExtra("FILE_RPATH", file.getLocalPath());
+                    properties.putExtra("FILE_EXT", file.isDirectory() ? "/" : checkIfEmpty(file.getName().substring(file.getName().lastIndexOf(".") + 1)));
+                    properties.putExtra("FILE_LPATH", checkIfEmpty(file.getRemotePath()));
+                    properties.putExtra("FILE_HASH", checkIfEmpty(file.getHash()));
+                    properties.putExtra("FILE_RPATH", checkIfEmpty(file.getLocalPath()));
                     context.startActivity(properties);
                 }
                 return true;
@@ -78,9 +78,30 @@ public class ListViewAdapterDisk extends ArrayAdapter<File> {
         textView1.setText(file.getName());
 
         TextView textView2 = currentItemView.findViewById(R.id.textView2);
-        textView2.setText(file.getSize() + "");
+        textView2.setText(file.isDirectory() ? file.getSize() + "" : getFileSize(file.getSize()));
 
         return currentItemView;
+    }
+
+    private String checkIfEmpty(String name) {
+        if(name != null && !name.isEmpty()){
+            return name;
+        }
+        return "/";
+    }
+
+    private String getFileSize(long size) {
+        long fileSizeInKB = size / 1024;
+        long fileSizeInMB = fileSizeInKB / 1024;
+        long fileSizeInGB = fileSizeInMB / 1024;
+        if(fileSizeInGB > 0)
+            return fileSizeInGB + " GB";
+        else if(fileSizeInMB > 0)
+            return fileSizeInMB + " MB";
+        else if(fileSizeInKB > 0)
+            return fileSizeInKB + " KB";
+        else
+            return size + " B";
     }
 
     @NonNull

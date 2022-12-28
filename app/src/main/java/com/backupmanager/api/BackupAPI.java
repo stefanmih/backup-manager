@@ -1,12 +1,17 @@
 package com.backupmanager.api;
 
+import static com.backupmanager.data.AppStorage.baseUrl;
 import static com.backupmanager.data.AppStorage.password;
 import static com.backupmanager.data.AppStorage.username;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.util.Base64;
+import android.view.View;
 
+import com.backupmanager.app.R;
 import com.backupmanager.data.AppStorage;
 
 import java.io.BufferedReader;
@@ -71,18 +76,32 @@ public abstract class BackupAPI {
         new AsyncTask<URL, String, String>() {
             @Override
             protected String doInBackground(URL... urls) {
+                int i = 0;
+                AppStorage.activity.runOnUiThread(() -> {
+                    AppStorage.progressBarLocal.setVisibility(View.VISIBLE);
+                    AppStorage.activity.findViewById(R.id.localList).setEnabled(false);
+                });
                 for (String s : paths) {
-                    if(!s.trim().isEmpty()) {
+                    if (!s.trim().isEmpty()) {
                         uploadFile(s);
+                        i++;
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            int finalI = i;
+                            AppStorage.activity.runOnUiThread(() -> AppStorage.progressBarLocal.setProgress((int)(((double)finalI / paths.size())*100), true));
+                        }
                     }
                 }
+                AppStorage.activity.runOnUiThread(() -> {
+                    AppStorage.progressBarLocal.setVisibility(View.INVISIBLE);
+                    AppStorage.activity.findViewById(R.id.localList).setEnabled(true);
+                });
                 return null;
             }
         }.execute();
     }
 
     public static void uploadFile(String path) {
-        try (Socket socket = new Socket("192.168.100.18", 5000)) {
+        try (Socket socket = new Socket(AppStorage.ip, Integer.parseInt(AppStorage.tcpPort))) {
             dataInputStream = new DataInputStream(socket.getInputStream());
             dataOutputStream = new DataOutputStream(socket.getOutputStream());
             sendFile(path);
@@ -90,7 +109,7 @@ public abstract class BackupAPI {
             dataInputStream.close();
             dataOutputStream.close();
         } catch (Exception e) {
-            uploadFile(path);
+            e.printStackTrace();
         }
     }
 
