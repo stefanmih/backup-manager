@@ -5,11 +5,11 @@
     <item
         android:id="@+id/download"
         android:icon="@android:drawable/stat_sys_download"
-        android:title="Download"/>
+        android:title="@string/download"/>
 
     <item
         android:id="@+id/properties"
         android:icon="@android:drawable/ic_menu_sort_by_size"
-        android:title="Properties" />
+        android:title="@string/properties" />
 
 </menu>

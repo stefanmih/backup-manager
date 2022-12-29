@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.backupmanager.api.BackupAPI;
 import com.backupmanager.app.R;
 import com.backupmanager.app.ui.DetailsActivity;
 
@@ -59,6 +60,9 @@ public class ListViewAdapterDisk extends ArrayAdapter<File> {
                     properties.putExtra("FILE_HASH", checkIfEmpty(file.getHash()));
                     properties.putExtra("FILE_RPATH", checkIfEmpty(file.getLocalPath()));
                     context.startActivity(properties);
+                }
+                if(item.getTitle().equals("Download")){
+                    BackupAPI.downloadFile(getItem(position).getLocalPath());
                 }
                 return true;
             });

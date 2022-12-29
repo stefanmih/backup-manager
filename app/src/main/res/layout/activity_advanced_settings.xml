@@ -111,7 +111,7 @@
         android:id="@+id/qrcode"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Scan QR code"
+        android:text="@string/scan_qr_code"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.161"

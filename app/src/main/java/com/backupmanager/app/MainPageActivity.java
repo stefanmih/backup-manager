@@ -64,6 +64,7 @@ public class MainPageActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarMainPage.toolbar);
+        binding.appBarMainPage.fab.setVisibility(View.VISIBLE);
         binding.appBarMainPage.fab.setOnClickListener(view -> backup());
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;

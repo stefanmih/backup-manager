@@ -8,8 +8,10 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Build;
+import android.os.Environment;
 import android.util.Base64;
 import android.view.View;
+import android.widget.Toast;
 
 import com.backupmanager.app.R;
 import com.backupmanager.data.AppStorage;
@@ -20,6 +22,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -28,7 +33,10 @@ import java.net.Socket;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.function.IntFunction;
+import java.util.stream.Collectors;
 
 public abstract class BackupAPI {
 
@@ -87,7 +95,7 @@ public abstract class BackupAPI {
                         i++;
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                             int finalI = i;
-                            AppStorage.activity.runOnUiThread(() -> AppStorage.progressBarLocal.setProgress((int)(((double)finalI / paths.size())*100), true));
+                            AppStorage.activity.runOnUiThread(() -> AppStorage.progressBarLocal.setProgress((int) (((double) finalI / paths.size()) * 100), true));
                         }
                     }
                 }
@@ -124,5 +132,44 @@ public abstract class BackupAPI {
             dataOutputStream.flush();
         }
         fileInputStream.close();
+    }
+
+    @SuppressLint("StaticFieldLeak")
+    public static void downloadFile(String path) {
+        new AsyncTask<URL, String, String>() {
+            @Override
+            protected String doInBackground(URL... urls) {
+                try {
+                    String pathEnc = path.replace("\\", "%5C");
+                    URL url = new URL(baseUrl + "/download?path=" + pathEnc);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestProperty("Content-Type", "text/plain");
+                    connection.setRequestProperty("Authorization", "Basic " + new String(Base64.encode((username + ":" + password).getBytes(StandardCharsets.UTF_8), 0)));
+                    AppStorage.activity.runOnUiThread(() -> {
+                        AppStorage.activity.findViewById(R.id.progressBar3).setVisibility(View.VISIBLE);
+                        Toast.makeText(AppStorage.activity, "Starting downlaod...", Toast.LENGTH_SHORT).show();
+                    });
+                    try (InputStream is = connection.getInputStream()) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            String result = new BufferedReader(new InputStreamReader(is)).lines().collect(Collectors.joining());
+                            FileOutputStream writer = new FileOutputStream(Environment.getExternalStorageDirectory() + "/Download/" + path.substring(path.lastIndexOf("\\") + 1));
+                            List<Byte> lb = Arrays.stream(result.replace("[", "").replace("]", "").split(", ")).map(e -> ((byte) Integer.parseInt(e))).collect(Collectors.toList());
+                            for (Byte b : lb) {
+                                writer.write(b);
+                            }
+                            writer.close();
+                        }
+                    }
+                    AppStorage.activity.runOnUiThread(() -> {
+                        AppStorage.activity.findViewById(R.id.progressBar3).setVisibility(View.INVISIBLE);
+                        Toast.makeText(AppStorage.activity, "Download finished.", Toast.LENGTH_SHORT).show();
+                    });
+                    connection.disconnect();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return null;
+            }
+        }.execute();
     }
 }

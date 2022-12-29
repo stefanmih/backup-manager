@@ -5,21 +5,21 @@
     <item
         android:id="@+id/download"
         android:icon="@android:drawable/stat_sys_download"
-        android:title="Upload"/>
+        android:title="@string/upload"/>
 
     <item
         android:id="@+id/addbackup"
         android:icon="@android:drawable/ic_menu_sort_by_size"
-        android:title="Add to backup" />
+        android:title="@string/add_to_backup" />
 
     <item
         android:id="@+id/removebackup"
         android:icon="@android:drawable/ic_menu_sort_by_size"
-        android:title="Remove from backup" />
+        android:title="@string/remove_from_backup" />
 
     <item
         android:id="@+id/properties"
         android:icon="@android:drawable/ic_menu_sort_by_size"
-        android:title="Properties" />
+        android:title="@string/properties" />
 
 </menu>

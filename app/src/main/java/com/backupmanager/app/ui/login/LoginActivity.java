@@ -146,7 +146,7 @@ public class LoginActivity extends AppCompatActivity {
         @SuppressLint("StaticFieldLeak") final AsyncTask<URL, String, String> task = new AsyncTask<URL, String, String>() {
             @Override
             protected String doInBackground(URL... urls) {
-                runOnUiThread(()->{
+                runOnUiThread(() -> {
                     binding.progressBar2.setVisibility(View.VISIBLE);
                     if (SDK_INT >= Build.VERSION_CODES.N) {
                         binding.progressBar2.setProgress(0, true);

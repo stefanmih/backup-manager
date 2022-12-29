@@ -17,6 +17,7 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.backupmanager.app.R;
 import com.backupmanager.app.databinding.FragmentLocalFilesBinding;
 import com.backupmanager.app.utils.File;
 import com.backupmanager.app.utils.ListViewAdapterDisk;
@@ -39,6 +40,7 @@ public class LocalFilesFragment extends Fragment {
         View root = binding.getRoot();
         final ListView listView = binding.localList;
         final ProgressBar progressBar = binding.progressBar;
+        AppStorage.activity.findViewById(R.id.fab).setVisibility(View.VISIBLE);
         AppStorage.adapterLocal = new ListViewAdapterLocal(requireContext(), LocalFiles.getFiles(""));
         localFilesViewModel.getAdapter().observe(getViewLifecycleOwner(), listView::setAdapter);
         localFilesViewModel.getProgressBar().observe(getViewLifecycleOwner(), progressBar::setVisibility);

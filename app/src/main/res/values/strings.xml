@@ -38,4 +38,21 @@
     <string name="tcp_port">TCP port:</string>
     <string name="save">Save</string>
     <string name="advanced_settings">Advanced settings</string>
+    <string name="scan_qr_code">Scan QR code</string>
+    <string name="size">Size :</string>
+    <string name="extension">Extension :</string>
+    <string name="remote_path">Remote path :</string>
+    <string name="local_path">Local path :</string>
+    <string name="hash">Hash :</string>
+    <string name="name">Name :</string>
+    <string name="wifi_only">Backup occurs only when connected to Wi-Fi network</string>
+    <string name="enable_backup">Enable backup</string>
+    <string name="enable_disable_backup">Enable/Disable periodical backup of selected files and folders</string>
+    <string name="backup_period">Backup period</string>
+    <string name="backup_period_settings">Select how often backup happens</string>
+    <string name="download">Download</string>
+    <string name="properties">Properties</string>
+    <string name="upload">Upload</string>
+    <string name="add_to_backup">Add to backup</string>
+    <string name="remove_from_backup">Remove from backup</string>
 </resources>

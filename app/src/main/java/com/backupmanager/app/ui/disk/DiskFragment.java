@@ -53,17 +53,8 @@ public class DiskFragment extends Fragment {
                 getFilesFromRepository(selectedFile.getName());
             }
         });
-        binding.imageView4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AppStorage.adapterRemote.sort(new Comparator<File>() {
-                    @Override
-                    public int compare(File file, File t1) {
-                        return -file.getName().compareTo(t1.getName());
-                    }
-                });
-            }
-        });
+        binding.progressBar3.setVisibility(View.INVISIBLE);
+        binding.imageView4.setOnClickListener(view -> AppStorage.adapterRemote.sort((file, t1) -> -file.getName().compareTo(t1.getName())));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
@@ -78,6 +69,12 @@ public class DiskFragment extends Fragment {
             }
         });
         return root;
+    }
+
+    @Override
+    public void onResume() {
+        AppStorage.activity.findViewById(R.id.fab).setVisibility(View.VISIBLE);
+        super.onResume();
     }
 
     @SuppressLint("StaticFieldLeak")
